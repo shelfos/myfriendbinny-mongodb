@@ -1,8 +1,11 @@
 # Overview
 
-MyFriendBinny is a program for tracking storage bin inventory and the items stored in those bins.  This particular version is meant to be run in a console so the GUI is just basic.  Despite its simplicity (it's not database driven), it accomplishes its purpose.  Later versions will include a web application and mobile app, and will allow you to label your bins with a QR code, as well as attach images of all the objects in your bins.
+MyFriendBinny is a program for tracking storage bin inventory and the items stored in those bins.  This is the second version and is meant to be run in a console (just like the first), but the difference is that this version uses a Cloud database - specifically MongoDB.  The GUI is the same as in the first version (very basic console), but it includes a login screen so that the user can connect to the MongoDB database.  Later versions will include a web application and mobile app, and will allow you to label your bins with a QR code, as well as attach images of all the objects in your bins.
 
-[MyFriendBinny Kotlin Project](https://youtu.be/L2SdNkciU9I)  (sorry this is longer than 5 minutes)
+[MyFriendBinny Project Video (new version with database)](https://youtu.be/L2SdNkciU9I)  (sorry this is longer than 5 minutes)
+
+# Cloud Database
+
 
 # Development Environment
 

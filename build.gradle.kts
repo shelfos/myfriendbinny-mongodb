@@ -14,13 +14,35 @@ repositories {
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0") // Use the latest version
-    implementation(kotlin("stdlib")) // Ensure stdlib is included
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+    implementation(kotlin("stdlib"))
     testImplementation(kotlin("test"))
+
+    // Database dependencies
+    implementation("org.litote.kmongo:kmongo:4.3.0")
+    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
+
+    // Logging dependencies (updated versions)
+    implementation("org.slf4j:slf4j-api:2.0.9")           // Latest SLF4J version
+    implementation("ch.qos.logback:logback-classic:1.4.14")
+    implementation("ch.qos.logback:logback-core:1.4.14")
+}
+
+tasks.register<Copy>("copyEnv") {
+    from(file(".env"))
+    into(file("build/libs"))
+}
+
+tasks.withType<CreateStartScripts> {
+    dependsOn(tasks.named("copyEnv"))
 }
 
 tasks.test {
     useJUnitPlatform()
+}
+
+tasks.build {
+    dependsOn(tasks.named("copyEnv"))
 }
 
 kotlin {
