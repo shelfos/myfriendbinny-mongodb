@@ -20,7 +20,7 @@ object Mongo {
             val client = MongoClients.create(mongoUri)
             db = client.getDatabase("myfriendbinny")
             val command = Document("ping", 1)
-            val commandResult = db.runCommand(command)
+            db.runCommand(command)
             true
         } catch (e: Exception) {
             false
@@ -29,36 +29,36 @@ object Mongo {
 
     fun disconnect() {
         try {
-            client?.close()
+            client.close()
         } catch (_: Exception) { }
     }
 
     fun add(collectionName: String, doc: Document) {
-        val tb = Mongo.db.getCollection(collectionName)
+        val tb = db.getCollection(collectionName)
         val addResult = tb.insertOne(doc)
         println(addResult)
     }
 
     fun getList(collectionName: String): MongoCollection<Document> {
-        return Mongo.db.getCollection(collectionName)
+        return db.getCollection(collectionName)
     }
 
     fun delete(collectionName: String, id: String) {
-        val tb = Mongo.db.getCollection(collectionName)
+        val tb = db.getCollection(collectionName)
         tb.deleteOneById(ObjectId(id))
     }
 
     fun update(collectionName: String, id: String, doc: Document) {
-        val tb = Mongo.db.getCollection(collectionName)
+        val tb = db.getCollection(collectionName)
         val filter =  Filters.eq("_id", ObjectId(id))
-        val updateResult = tb.replaceOne(filter, doc, ReplaceOptions().upsert(false))
+        tb.replaceOne(filter, doc, ReplaceOptions().upsert(false))
     }
 
     fun clearItemsFromBin(binId: String) {
-        val tb = Mongo.db.getCollection("items")
+        val tb = db.getCollection("items")
         val filter = Filters.eq("binId", binId)
         val update = Updates.set("binId", "")
-        val updateResult = tb.updateMany(filter, update)
+        tb.updateMany(filter, update)
     }
 }
 

@@ -64,7 +64,7 @@ class Item {
         val itemDescription: String = readln()
 
         //Confirm user decision to place the item in an existing bin
-        var itemBinId: String = ""
+        var itemBinId = ""
         print(cyan("    Would you like to place this item in a bin right now? ('Y' to confirm)"))
         val placeBin = readln()
 
@@ -113,7 +113,7 @@ class Item {
 
     //Displays the actual data table of an item list
     fun displayItemTable(itemMap: Map<Int, ItemData>, allowSelect:Boolean, action:String ): ItemData {
-        var selectedItem: ItemData = ItemData("","","", "")
+        var selectedItem = ItemData("","","", "")
 
         if (itemMap.isEmpty()) {
             println("No items to display.")
@@ -152,7 +152,6 @@ class Item {
 
                 //Check for Cancel
                 if (itemSelected.uppercase() == "C") {
-                    displayDialog = false
                     return selectedItem
                 }
 
@@ -233,7 +232,7 @@ class Item {
     //This function allows the user to transfer an item to a bin
     fun transferToBin() {
         val itemList = getItems("")
-        var itemToTransfer = displayItemTable(itemList, true, "transfer")
+        val itemToTransfer = displayItemTable(itemList, true, "transfer")
         if (itemToTransfer.isEmpty()) {
             return
         }

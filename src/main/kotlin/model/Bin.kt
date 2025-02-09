@@ -144,7 +144,6 @@ class Bin {
 
                 //Check for Cancel
                 if (binSelected.uppercase() == "C") {
-                    displayDialog = false
                     return selectedBin
                 }
 
