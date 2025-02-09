@@ -2,7 +2,7 @@
 
 MyFriendBinny is a program for tracking storage bin inventory and the items stored in those bins.  This is the second version and is meant to be run in a console (just like the first), but the difference is that this version uses a Cloud database - specifically MongoDB.  The GUI is the same as in the first version (very basic console), but it includes a login screen so that the user can authenticate and connect to the MongoDB database.  Later versions will include a web application and mobile app, and will allow you to label your bins with a QR code, as well as attach images of all the objects in your bins.
 
-[MyFriendBinny Project Video (new version with database)](https://youtu.be/L2SdNkciU9I)
+[MyFriendBinny Project Video (new version with database)](https://youtu.be/yIOJYCS4P8I)
 
 # Cloud Database
 - The database I chose for this project is MongoDB.  This is a NO SQL database that makes use of documents.
