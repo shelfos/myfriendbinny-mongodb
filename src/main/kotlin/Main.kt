@@ -4,8 +4,6 @@ import utils.*
 import controller.MainMenu
 import controller.Database
 import controller.Mongo
-import kotlin.io.path.Path
-import kotlin.io.path.createDirectories
 import io.github.cdimascio.dotenv.dotenv
 
 import org.slf4j.Logger

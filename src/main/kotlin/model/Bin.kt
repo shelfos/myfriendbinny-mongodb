@@ -5,7 +5,6 @@ import kotlinx.serialization.*
 import controller.Mongo
 import org.bson.Document
 
-const val binsPath = "C:/myFriendBinny/bins/"
 const val binColumnWidth = 4
 const val binIdColumnWidth = 36
 const val binNameColumnWidth = 30
@@ -107,7 +106,7 @@ class Bin {
 
     //Displays the actual data table of a bin list
     fun displayBinTable(binMap: Map<Int, BinData>, allowSelect:Boolean, action:String ): BinData {
-        var selectedBin: BinData = BinData("","","")
+        var selectedBin = BinData("","","")
 
         if (binMap.isEmpty()) {
             println("No bins to display.")
