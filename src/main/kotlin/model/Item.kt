@@ -1,13 +1,10 @@
 package model
 
-import java.util.*
-import java.io.File
 import utils.*
 import kotlinx.serialization.*
-import kotlinx.serialization.json.*
-import model.Bin
+import controller.Mongo
+import org.bson.Document
 
-const val itemsPath = "C:/myFriendBinny/items/"
 const val itemColumnWidth = 6
 const val itemIdColumnWidth = 36
 const val itemNameColumnWidth = 30
@@ -16,8 +13,8 @@ const val itemDescriptionColumnWidth = 50
 /**
  * ItemData object
  *
- * @param id a random UUID assigned to this item
- * @param binId the associated bin UUID where this item resides (or empty if standalone item)
+ * @param id a String version of the ObjectId for this item
+ * @param binId the associated bin id where this item resides (or empty if standalone item)
  * @param name a name for this item
  * @param description a description of the item
  *
@@ -58,10 +55,6 @@ class Item {
     fun add() {
         println(cyan("    Please enter your Item details:"))
 
-        //Generate id
-        val itemId: String = UUID.randomUUID().toString()
-        println("         ID (auto-assigned): $itemId")
-
         //Get name
         print("         Name: ")
         val itemName: String = readln()
@@ -85,31 +78,27 @@ class Item {
             }
         }
 
-        //Format data for saving and save to a file
-        val itemData = ItemData(itemId, itemBinId, itemName, itemDescription)
-        val jsonString = Json.encodeToString(itemData)
-        save(itemId, jsonString)
+        val doc = Document("name", itemName).append("description", itemDescription).append("binId", itemBinId)
+        Mongo.add("items", doc)
 
-    }
-
-    //Save item
-    private fun save(fileName: String, fileContent: String) {
-        val file = File("$itemsPath/$fileName")
-        file.writeText(fileContent)
     }
 
     //Get list of items (either all or for a single bin)
-    fun getItems(binId: String):  Map<Int, ItemData> {
+    fun getItems(binIdFilter: String):  Map<Int, ItemData> {
         var itemNum = 0
         val itemsMap = mutableMapOf<Int, ItemData>()
-        File(itemsPath).walk().forEach { file ->
-            if (!file.isDirectory) {
-                val fileContent = file.readText()
-                val itemDataFromFile = Json.decodeFromString<ItemData>(fileContent)
-                if (binId.isEmpty() || (binId.isNotEmpty() && binId == itemDataFromFile.binId)) {
-                    itemNum ++
-                    itemsMap[itemNum] = itemDataFromFile
-                }
+        val itemsList = Mongo.getList("items").find()
+
+        itemsList.forEach { document ->
+            val id = document.getObjectId("_id").toHexString()
+            val binId = document.getString("binId")
+            val name = document.getString("name")
+            val description = document.getString("description")
+            val itemData = ItemData(id, binId, name, description)
+
+            if (binIdFilter.isEmpty() || (binIdFilter.isNotEmpty() && binId == binIdFilter)) {
+                itemNum++
+                itemsMap[itemNum] = itemData
             }
         }
 
@@ -198,8 +187,9 @@ class Item {
 
         if (response == 'Y') {
             val selectedItemId = itemToDelete.id
-            File("$itemsPath$selectedItemId").delete()
+            Mongo.delete("items", selectedItemId)
         }
+
     }
 
     //Allow user to change details about an item
@@ -230,10 +220,13 @@ class Item {
             print("         Description (new): ")
             val newItemDescription: String = readln()
 
-            //Format data for saving and save to a file
+            //Format data for saving and update
             val newItemData = ItemData(selectedItemId, selectedBinId, newItemName, newItemDescription)
-            val jsonString = Json.encodeToString(newItemData)
-            save(selectedItemId, jsonString)
+            val doc = Document("name", newItemData.name)
+                .append("description", newItemData.description)
+                .append("binId", newItemData.binId)
+            Mongo.update("items", newItemData.id, doc)
+
         }
     }
 
@@ -257,8 +250,10 @@ class Item {
             val binToUse = toBin.displayBinTable(binsMap, true, "transfer item to")
             if (!binToUse.isEmpty()) {
                 itemToTransfer.binId = binToUse.id
-                val jsonString = Json.encodeToString(itemToTransfer)
-                save(itemToTransfer.id, jsonString)
+                val doc = Document("name", itemToTransfer.name)
+                    .append("description", itemToTransfer.description)
+                    .append("binId", itemToTransfer.binId)
+                Mongo.update("items", itemToTransfer.id, doc)
             }
 
         }

@@ -1,11 +1,9 @@
 package model
 
-import java.util.*
-import java.io.File
 import utils.*
 import kotlinx.serialization.*
-import kotlinx.serialization.json.*
-import model.Item
+import controller.Mongo
+import org.bson.Document
 
 const val binsPath = "C:/myFriendBinny/bins/"
 const val binColumnWidth = 4
@@ -16,7 +14,7 @@ const val binDescriptionColumnWidth = 50
 /**
  * BinData object
  *
- * @param id a random UUID assigned to this bin
+ * @param id a String version of the ObjectId for this bin
  * @param name a name for this bin
  * @param description a description of the bin
  *
@@ -54,10 +52,6 @@ class Bin {
     fun add() {
         println(cyan("    Please enter your Bin details:"))
 
-        //Generate id
-        val binId: String = UUID.randomUUID().toString()
-        println("         ID (auto-assigned): $binId")
-
         //Get name
         print("         Name: ")
         val binName: String = readln()
@@ -66,30 +60,26 @@ class Bin {
         print("         Description: ")
         val binDescription: String = readln()
 
-        //Format data for saving and save to a file
-        val binData = BinData(binId, binName, binDescription)
-        val jsonString = Json.encodeToString(binData)
-        save(binId, jsonString)
+        val doc = Document("name", binName).append("description", binDescription)
+        Mongo.add("bins", doc)
 
-    }
-
-    //Save bin
-    private fun save(fileName: String, fileContent: String) {
-        val file = File("$binsPath/$fileName")
-        file.writeText(fileContent)
     }
 
     //Get list of all bins
     fun getBins():  Map<Int, BinData> {
         var binNum = 0
         val binsMap = mutableMapOf<Int, BinData>()
-        File(binsPath).walk().forEach { file ->
-            if (!file.isDirectory) {
-                binNum ++
-                val fileContent = file.readText()
-                val binDataFromFile = Json.decodeFromString<BinData>(fileContent)
-                binsMap[binNum] = binDataFromFile
-            }
+        val binsList = Mongo.getList("bins").find()
+
+        binsList.forEach { document ->
+            binNum ++
+
+            val id = document.getObjectId("_id").toHexString()
+            val name = document.getString("name")
+            val description = document.getString("description")
+            val binData = BinData(id, name, description)
+
+            binsMap[binNum] = binData
         }
 
         return binsMap
@@ -190,7 +180,8 @@ class Bin {
 
         if (response == 'Y') {
             val selectedBinId = binToDelete.id
-            File("$binsPath$selectedBinId").delete()
+            Mongo.delete("bins", selectedBinId)
+            Mongo.clearItemsFromBin(selectedBinId)
         }
     }
 
@@ -222,9 +213,11 @@ class Bin {
 
             //Format data for saving and save to a file
             val newBinData = BinData(selectedBinId, newBinName, newBinDescription)
-            val jsonString = Json.encodeToString(newBinData)
-            save(selectedBinId, jsonString)
+            val doc = Document("name", newBinData.name)
+                .append("description", newBinData.description)
+            Mongo.update("bins", newBinData.id, doc)
         }
+
     }
 
 
