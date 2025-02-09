@@ -136,7 +136,7 @@ class Bin {
 
         //Dialog section
         if (allowSelect) {
-            var displayDialog = true
+            val displayDialog = true
             var binSelected:String
             while (displayDialog) {
                 print("Please select a bin to $action or press 'C' to cancel: ")

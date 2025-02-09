@@ -144,7 +144,7 @@ class Item {
 
         //Dialog section
         if (allowSelect) {
-            var displayDialog = true
+            val displayDialog = true
             var itemSelected:String
             while (displayDialog) {
                 print("Please select an item to $action or press 'C' to cancel: ")

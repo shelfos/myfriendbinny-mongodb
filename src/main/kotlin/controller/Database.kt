@@ -71,7 +71,7 @@ class Database {
 
     fun login():Boolean {
 
-        var validInput: Boolean = false
+        var validInput = false
         var tries = 1
         println(cyan("Please enter your database username and password:"))
         while(!validInput && tries < 4) {
