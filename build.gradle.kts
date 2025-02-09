@@ -11,6 +11,9 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+
+    //Added on 2/8/2025
+    maven { url = uri("https://repo.maven.apache.org/maven2") }
 }
 
 dependencies {
@@ -26,6 +29,10 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.9")           // Latest SLF4J version
     implementation("ch.qos.logback:logback-classic:1.4.14")
     implementation("ch.qos.logback:logback-core:1.4.14")
+
+    // Explicitly upgrade Jackson dependencies due to vulnerability warnings on the org.litote.kmongo:kmongo:4.3.0 above
+    //implementation("com.fasterxml.jackson.core:jackson-core:2.13.4.2")
+    //implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4.2")
 
 }
 
